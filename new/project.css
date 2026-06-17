@@ -1,0 +1,192 @@
+@font-face {
+  font-family: "Sporting Grotesque Local";
+  src: url("./font/SportingGrotesque-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --bg: #ffffff;
+  --text: #88342a;
+  --accent: #d8f28f;
+  --title: #d8f28f;
+  --panel: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Karla", sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+video {
+  display: block;
+  width: 100%;
+}
+
+.project-shell {
+  padding: 74px 46px 28px;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 84px;
+}
+
+.project-logo {
+  text-decoration: none;
+}
+
+.project-logo__name {
+  display: block;
+  margin-bottom: 6px;
+  font-family: "Karla", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.project-logo__ascii {
+  margin: 0;
+  color: var(--accent);
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  line-height: 1;
+  white-space: pre;
+}
+
+.project-nav {
+  display: flex;
+  gap: 36px;
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.project-hero {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.92fr) minmax(320px, 0.88fr);
+  gap: 44px;
+  align-items: start;
+  margin-bottom: 80px;
+}
+
+.project-copy h1 {
+  margin: 0 0 24px;
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: clamp(42px, 6vw, 78px);
+  line-height: 0.95;
+  font-weight: 400;
+  color: var(--title);
+}
+
+.project-copy p {
+  margin: 0 0 20px;
+  max-width: 620px;
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.5;
+}
+
+.project-quote {
+  max-width: 420px;
+  margin: 18px 0 28px;
+  color: var(--accent);
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: clamp(20px, 2.1vw, 28px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.project-statement {
+  max-width: 470px;
+  margin: 0 0 28px;
+  padding-left: 2px;
+}
+
+.project-statement p {
+  margin: 0 0 14px;
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.project-copy .project-meta {
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.project-lead {
+  padding: 0;
+  padding-top: 8px;
+}
+
+.project-lead img,
+.project-lead video {
+  max-width: 100%;
+  max-height: 64vh;
+  object-fit: contain;
+  margin: 0;
+}
+
+.project-gallery {
+  display: grid;
+  gap: 48px;
+}
+
+.project-frame {
+  padding: 0;
+}
+
+.project-frame img,
+.project-frame video {
+  max-height: 78vh;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.project-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 48px;
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: 12px;
+}
+
+@media (max-width: 960px) {
+  .project-shell {
+    padding: 32px 20px 24px;
+  }
+
+  .project-header {
+    margin-bottom: 48px;
+  }
+
+  .project-hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-bottom: 48px;
+  }
+
+  .project-copy p {
+    font-size: 18px;
+  }
+
+  .project-lead,
+  .project-frame {
+    padding: 18px;
+  }
+}

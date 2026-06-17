@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rooms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #030303;
+      --text: rgba(255, 255, 255, 0.9);
+      --text-soft: rgba(255, 255, 255, 0.56);
+      --text-faint: rgba(255, 255, 255, 0.36);
+      --line-strong: rgba(255, 255, 255, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.02), transparent 20%),
+        radial-gradient(circle at 82% 78%, rgba(255, 255, 255, 0.015), transparent 18%),
+        radial-gradient(circle at top, #070707 0%, var(--bg) 46%);
+      color: var(--text);
+    }
+
+    body {
+      font-family: "Instrument Serif", serif;
+      overflow-x: hidden;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      letter-spacing: 0.03em;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 2.8rem 1.35rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-soft);
+      font-size: 0.86rem;
+    }
+
+    .meta > span {
+      font-size: 1.16rem;
+      color: rgba(255, 255, 255, 0.84);
+      letter-spacing: 0.01em;
+    }
+
+    .back-link {
+      color: var(--text-soft);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 220ms ease, border-color 220ms ease;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible {
+      color: var(--text);
+      border-color: var(--line-strong);
+      outline: none;
+    }
+
+    .stage {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      position: relative;
+      min-height: 42vh;
+    }
+
+    .stage.interior-open {
+      place-items: start center;
+      padding-top: 0.6rem;
+    }
+
+    .ascii-button {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+    }
+
+    .ascii-button:focus-visible {
+      outline: 1px solid rgba(255, 255, 255, 0.36);
+      outline-offset: 8px;
+    }
+
+    .house-entry {
+      display: grid;
+      gap: 0.85rem;
+      justify-items: center;
+      transition: opacity 320ms ease;
+    }
+
+    .house-entry.hidden {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+    }
+
+    .entry-gif-wrap {
+      position: relative;
+      width: min(42vw, 350px);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .entry-gif {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: saturate(0.96) contrast(0.98);
+      transition: opacity 240ms ease, transform 320ms ease;
+      pointer-events: none;
+    }
+
+    .ascii-button:hover .entry-gif,
+    .ascii-button:focus-visible .entry-gif {
+      transform: translateY(-2px);
+    }
+
+    .entry-label {
+      color: var(--text-faint);
+      font-size: 0.8rem;
+      text-transform: lowercase;
+    }
+
+    .floor-view {
+      width: min(1120px, 100%);
+      display: grid;
+      grid-template-columns: minmax(320px, 500px) minmax(360px, 1fr);
+      gap: 2.2rem;
+      align-items: start;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 320ms ease;
+    }
+
+    .floor-view.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .plan-wrap {
+      display: grid;
+      justify-items: start;
+      gap: 0.8rem;
+      text-align: left;
+    }
+
+    .ascii-plan {
+      position: relative;
+      margin: 0;
+      white-space: pre;
+      display: inline-block;
+      font-size: clamp(0.72rem, 0.95vw, 0.94rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      color: rgba(255, 255, 255, 0.8);
+      user-select: none;
+    }
+
+    .ascii-room-link {
+      color: var(--text-soft);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 140ms ease, border-color 140ms ease;
+    }
+
+    .ascii-room-link:hover,
+    .ascii-room-link:focus-visible,
+    .ascii-room-link.active {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.5);
+      outline: none;
+    }
+
+    .choose-copy {
+      color: var(--text-faint);
+      font-size: 0.8rem;
+      margin-top: 0.1rem;
+      transition: opacity 180ms ease;
+    }
+
+    .choose-copy.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .gallery-area {
+      min-height: 52vh;
+      display: block;
+      position: relative;
+    }
+
+    .image-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      overflow: visible;
+      min-height: auto;
+      padding-right: 0.16rem;
+      transition: opacity 260ms ease;
+      opacity: 1;
+    }
+
+    .image-stream.is-switching {
+      opacity: 0.2;
+    }
+
+    .image-stream img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.02);
+      filter: saturate(0.95) contrast(0.99);
+    }
+
+    .right-placeholder {
+      width: 100%;
+      display: grid;
+      place-items: center;
+      min-height: 52vh;
+      opacity: 1;
+      transition: opacity 220ms ease;
+    }
+
+    .right-placeholder.hidden {
+      opacity: 0;
+      display: none;
+    }
+
+    .right-placeholder img {
+      width: min(46%, 255px);
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: saturate(0.94) contrast(0.98);
+    }
+
+
+    @media (max-width: 920px) {
+      .floor-view {
+        grid-template-columns: 1fr;
+      }
+      .plan-wrap {
+        justify-items: center;
+        text-align: center;
+      }
+      .ascii-plan {
+        font-size: 0.62rem;
+      }
+      .gallery-area {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        padding: 1.2rem 0.95rem 2rem;
+      }
+      .meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .ascii-plan {
+        font-size: 0.56rem;
+      }
+
+      .entry-gif-wrap {
+        width: min(66vw, 300px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="meta">
+      <a class="back-link" href="index.html">return</a>
+      <span>rooms</span>
+      <small class="mono"></small>
+    </div>
+
+    <section class="stage">
+      <div id="entryView" class="house-entry">
+        <button id="enterHouse" class="ascii-button mono" aria-label="Enter rooms archive">
+          <span class="entry-gif-wrap" aria-hidden="true">
+            <img class="entry-gif base" src="roomgif.gif" alt="" onerror="this.onerror=null; this.src='house.gif';" />
+          </span>
+        </button>
+        <div class="entry-label mono">enter</div>
+      </div>
+
+      <section id="floorView" class="floor-view" aria-live="polite">
+        <div class="plan-wrap">
+<pre class="ascii-plan mono">    ___________________________________________
+   |              |              |            |
+   |    room1     |    room2     |   room3    |
+   |      <a class="ascii-room-link" data-room="room1" href="#">[1]</a>     |      <a class="ascii-room-link" data-room="room2" href="#">[2]</a>     |    <a class="ascii-room-link" data-room="room3" href="#">[3]</a>     |
+   |______________|______________|____________|
+   |                    hall                  |
+   |------------------------------------------|
+   |      room4      |   room5   |   room6    |
+   |       <a class="ascii-room-link" data-room="room4" href="#">[4]</a>       |    <a class="ascii-room-link" data-room="room5" href="#">[5]</a>    |    <a class="ascii-room-link" data-room="room6" href="#">[6]</a>     |
+   |_________________|___________|____________|
+   |                  room7                   
+   |                   <a class="ascii-room-link" data-room="room7" href="#">[7]</a>                    
+   |______________________________________...
+</pre>
+          <div class="choose-copy mono">choose a room [1]-[7]</div>
+        </div>
+
+        <aside class="gallery-area">
+          <div id="rightPlaceholder" class="right-placeholder">
+            <img src="house pixel.gif" alt="" onerror="this.style.display='none';" />
+          </div>
+          <div id="imageStream" class="image-stream"></div>
+        </aside>
+      </section>
+    </section>
+  </main>
+  <script>
+    const roomData = {
+      room1: [
+        "new/photos/rooms/room1/1.JPG",
+        "new/photos/rooms/room1/2.JPG",
+        "new/photos/rooms/room1/3.JPG",
+        "new/photos/rooms/room1/4.JPG",
+        "new/photos/rooms/room1/R0006655.JPG",
+        "new/photos/rooms/room1/R0006656.JPG",
+        "new/photos/rooms/room1/R0006658.JPG"
+      ],
+      room2: [
+        "new/photos/rooms/room2/1.JPG",
+        "new/photos/rooms/room2/piece of colour.JPG"
+      ],
+      room3: [
+        "new/photos/rooms/room3/1.JPG",
+        "new/photos/rooms/room3/2.JPG",
+        "new/photos/rooms/room3/3.JPG",
+        "new/photos/rooms/room3/4.JPG",
+        "new/photos/rooms/room3/5.JPG",
+        "new/photos/rooms/room3/6.JPG",
+        "new/photos/rooms/room3/IMG_3227.JPG",
+        "new/photos/rooms/room3/IMG_3321.JPG"
+      ],
+      room4: [
+        "new/photos/rooms/room4/2.JPG",
+        "new/photos/rooms/room4/R0000337.JPG",
+        "new/photos/rooms/room4/R0000344.JPG",
+        "new/photos/rooms/room4/R0000345.JPG",
+        "new/photos/rooms/room4/R0000346.JPG"
+      ],
+      room5: [
+        "new/photos/rooms/room5/1.JPG",
+        "new/photos/rooms/room5/R0001209.JPG",
+        "new/photos/rooms/room5/R0001553.JPG"
+      ],
+      room6: [
+        "new/photos/rooms/room6/R0000372.JPG",
+        "new/photos/rooms/room6/R0000386.JPG",
+        "new/photos/rooms/room6/R0000387.JPG",
+        "new/photos/rooms/room6/R0000400.JPG",
+        "new/photos/rooms/room6/R0000558.JPG",
+        "new/photos/rooms/room6/R0000559.JPG",
+        "new/photos/rooms/room6/RS.JPG"
+      ],
+      room7: [
+        "new/photos/rooms/room7/1.JPG",
+        "new/photos/rooms/room7/R0000948.JPG",
+        "new/photos/rooms/room7/R0000951.JPG",
+        "new/photos/rooms/room7/R0000954.JPG",
+        "new/photos/rooms/room7/R0001050.JPG",
+        "new/photos/rooms/room7/R0001053.JPG",
+        "new/photos/rooms/room7/R0001057.JPG"
+      ]
+    };
+
+    const entryView = document.getElementById("entryView");
+    const stage = document.querySelector(".stage");
+    const floorView = document.getElementById("floorView");
+    const enterHouse = document.getElementById("enterHouse");
+    const imageStream = document.getElementById("imageStream");
+    const rightPlaceholder = document.getElementById("rightPlaceholder");
+    const chooseCopy = document.querySelector(".choose-copy");
+    const asciiRoomLinks = Array.from(document.querySelectorAll(".ascii-room-link"));
+    let hasSelectedRoom = false;
+
+    function safeSrc(src) {
+      return src.split("/").map(encodeURIComponent).join("/");
+    }
+
+    function activateRoom(roomKey) {
+      const images = roomData[roomKey] || [];
+
+      if (!hasSelectedRoom) {
+        hasSelectedRoom = true;
+        chooseCopy.classList.add("hidden");
+      }
+      if (rightPlaceholder) {
+        rightPlaceholder.classList.add("hidden");
+      }
+
+      asciiRoomLinks.forEach((link) => link.classList.toggle("active", link.dataset.room === roomKey));
+
+      imageStream.classList.add("is-switching");
+      window.setTimeout(() => {
+        if (!images.length) {
+          imageStream.innerHTML = "";
+          imageStream.classList.remove("is-switching");
+          return;
+        }
+
+        imageStream.innerHTML = images.map((src) => {
+          const encoded = safeSrc(src);
+          return `<img src="${encoded}" alt="">`;
+        }).join("");
+
+        imageStream.scrollTop = 0;
+        requestAnimationFrame(() => imageStream.classList.remove("is-switching"));
+      }, 120);
+    }
+
+    function openInterior() {
+      entryView.classList.add("hidden");
+      floorView.classList.add("active");
+      stage.classList.add("interior-open");
+      hasSelectedRoom = false;
+      if (rightPlaceholder) {
+        rightPlaceholder.classList.remove("hidden");
+      }
+      imageStream.innerHTML = "";
+    }
+
+    enterHouse.addEventListener("click", openInterior);
+
+    asciiRoomLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        activateRoom(link.dataset.room);
+      });
+    });
+  </script>
+</body>
+</html>

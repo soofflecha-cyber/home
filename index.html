@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Poster Interactive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --text-main: rgba(255, 255, 255, 0.98);
+      --text-soft: rgba(255, 255, 255, 0.42);
+      --shadow: rgba(0, 0, 0, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #000;
+      overflow-x: hidden;
+      overflow-y: auto;
+      font-family: "Instrument Serif", serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      color: var(--text-main);
+    }
+
+    .page {
+      position: relative;
+    }
+
+    .poster,
+    .video-section {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .poster {
+      background:
+        radial-gradient(circle at 50% 62%, rgba(255, 255, 255, 0.22), transparent 28%),
+        linear-gradient(to bottom, #050505 0%, #101010 18%, #1a1a1a 100%);
+      isolation: isolate;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(0.94) brightness(0.98);
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .overlay-dark {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 82%, rgba(0, 0, 0, 0.22)),
+        radial-gradient(circle at 29% 42%, rgba(0, 0, 0, 0.12), transparent 20%),
+        radial-gradient(circle at 72% 63%, rgba(0, 0, 0, 0.07), transparent 18%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .word,
+    .phrase {
+      position: absolute;
+      z-index: 2;
+      color: var(--text-soft);
+      text-decoration: none;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.04);
+      transition:
+        opacity 360ms ease,
+        transform 420ms ease,
+        filter 420ms ease,
+        color 360ms ease,
+        text-shadow 360ms ease;
+      transform-origin: center;
+      will-change: transform, filter, opacity;
+    }
+
+    .word {
+      font-size: clamp(2.8rem, 4vw, 5rem);
+      line-height: 0.92;
+      filter: blur(2.4px);
+      opacity: 0.42;
+    }
+
+    .phrase {
+      font-size: clamp(1.7rem, 2.1vw, 2.8rem);
+      line-height: 1.04;
+      filter: blur(1.2px);
+      opacity: 0.48;
+      text-align: left;
+    }
+
+    .word:hover,
+    .phrase:hover,
+    .word:focus-visible,
+    .phrase:focus-visible {
+      opacity: 1;
+      filter: blur(0);
+      color: var(--text-main);
+      transform: translateY(-4px) scale(1.015);
+      text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.12),
+        0 0 12px rgba(255, 255, 255, 0.08);
+      outline: none;
+    }
+
+    .its { left: 18.8%; top: 27.7%; }
+
+    .where {
+      left: 24.4%;
+      top: 35.5%;
+      color: var(--text-main);
+      opacity: 0.98;
+      filter: blur(0);
+      text-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.14),
+        0 0 8px rgba(255, 255, 255, 0.04);
+    }
+
+    .you { left: 30.2%; top: 45.1%; }
+    .can { left: 29.3%; top: 55.1%; }
+    .be { left: 24.8%; top: 65.3%; opacity: 0.28; }
+
+    .right-phrase {
+      left: 67.5%;
+      top: 61.2%;
+      opacity: 0.44;
+    }
+
+    .room-link::after,
+    .next-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -0.08em;
+      height: 1px;
+      background: rgba(255, 255, 255, 0);
+      transition: background 320ms ease;
+    }
+
+    .room-link:hover::after,
+    .room-link:focus-visible::after,
+    .next-link:hover::after,
+    .next-link:focus-visible::after {
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .hint {
+      position: absolute;
+      right: 1.2rem;
+      bottom: 1rem;
+      z-index: 3;
+      color: rgba(255, 255, 255, 0.42);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      opacity: 0.8;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .video-section {
+      display: grid;
+      place-items: stretch;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 32%),
+        linear-gradient(to bottom, #070707 0%, #000 100%);
+      padding: 0;
+      opacity: 0;
+      transform: translateY(48px);
+      transition:
+        opacity 1000ms ease,
+        transform 1000ms ease;
+    }
+
+    .video-section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .video-frame video {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .video-copy {
+      position: absolute;
+      left: 1.5rem;
+      bottom: 1.4rem;
+      z-index: 2;
+      color: rgba(255, 255, 255, 0.84);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+    }
+
+    .video-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 40%, rgba(0, 0, 0, 0.28)),
+        radial-gradient(circle at center, transparent 38%, rgba(0, 0, 0, 0.18));
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .video-copy strong,
+    .video-copy span {
+      display: block;
+    }
+
+    .video-copy strong {
+      font-size: clamp(1.4rem, 2vw, 2.2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .video-copy span {
+      margin-top: 0.15rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.54);
+    }
+
+    @media (max-width: 900px) {
+      .word { font-size: clamp(2.2rem, 7vw, 4rem); }
+      .phrase { font-size: clamp(1.15rem, 3vw, 1.8rem); }
+
+      .its { left: 14%; top: 25%; }
+      .where { left: 19%; top: 34%; }
+      .you { left: 27%; top: 44%; }
+      .can { left: 24%; top: 54%; }
+      .be { left: 19%; top: 64%; }
+
+      .right-phrase {
+        left: 68%;
+        top: 60%;
+        max-width: 24vw;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .hint { display: none; }
+
+      .overlay-dark {
+        background:
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.36), rgba(0, 0, 0, 0.02) 20%, rgba(0, 0, 0, 0.02) 78%, rgba(0, 0, 0, 0.3)),
+          radial-gradient(circle at 32% 40%, rgba(0, 0, 0, 0.16), transparent 22%),
+          radial-gradient(circle at 72% 62%, rgba(0, 0, 0, 0.11), transparent 20%);
+      }
+
+      .word { font-size: clamp(2rem, 8vw, 3.2rem); }
+
+      .phrase {
+        font-size: clamp(1rem, 3.8vw, 1.4rem);
+        max-width: 30vw;
+      }
+
+      .its { left: 10%; top: 26%; }
+      .where { left: 14%; top: 35%; }
+      .you { left: 21%; top: 45%; }
+      .can { left: 18%; top: 55%; }
+      .be { left: 12%; top: 66%; }
+
+      .right-phrase {
+        left: 64%;
+        top: 63%;
+      }
+
+      .video-section {
+        padding: 0;
+      }
+
+      .video-frame {
+        width: 100vw;
+        height: 100vh;
+        aspect-ratio: auto;
+        border: none;
+      }
+
+      .video-copy {
+        left: 1rem;
+        bottom: 1rem;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main class="poster">
+      <img
+        class="bg"
+        src="backgrond pic.png"
+        alt="Dreamlike room installation with sand-like floor and solitary figure"
+      />
+      <div class="overlay-dark" aria-hidden="true"></div>
+
+      <span class="word its" aria-hidden="true">IT&rsquo;S</span>
+      <a class="word room-link where" href="rooms.index.html" aria-label="Go to Rooms page">WHERE</a>
+      <a class="word room-link you" href="you.html" aria-label="Go to You page">YOU</a>
+      <a class="word room-link can" href="can.html" aria-label="Go to Can page">CAN</a>
+      <a class="word room-link be" href="be.html" aria-label="Go to Be page">BE.</a>
+
+      <a class="phrase next-link right-phrase" href="intro.html" aria-label="Go to Intro page">
+        A ROOM<br />
+        IS NOT<br />
+        WHERE YOU ARE
+      </a>
+
+      <div class="hint">scroll down</div>
+    </main>
+
+    <section class="video-section" aria-label="Next session video">
+      <div class="video-frame">
+        <video autoplay muted loop playsinline>
+          <source src="next session.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-copy">
+          <strong>NEXT SESSION</strong>
+          <span>Below the room, another scene begins</span>
+        </div>
+        <audio id="secondSectionAudio" preload="auto">
+          <source src="first song.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+    </section>
+  </div>
+  <script>
+    const videoSection = document.querySelector(".video-section");
+    const secondSectionAudio = document.getElementById("secondSectionAudio");
+    let secondAudioCutoffTimer = null;
+    let secondSectionInView = false;
+    let audioBlocked = false;
+    let audioPlayedOnce = false;
+
+    const stopSecondAudio = () => {
+      if (!secondSectionAudio) return;
+      secondSectionAudio.pause();
+      secondSectionAudio.currentTime = 0;
+      if (secondAudioCutoffTimer) {
+        window.clearTimeout(secondAudioCutoffTimer);
+        secondAudioCutoffTimer = null;
+      }
+    };
+
+    const playSecondAudio = () => {
+      if (!secondSectionAudio || !secondSectionInView || audioPlayedOnce) return;
+      secondSectionAudio.currentTime = 0;
+      secondSectionAudio.volume = 0.24;
+      const playPromise = secondSectionAudio.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise
+          .then(() => {
+            audioBlocked = false;
+            audioPlayedOnce = true;
+          })
+          .catch(() => {
+            audioBlocked = true;
+          });
+      } else {
+        audioPlayedOnce = true;
+      }
+      if (secondAudioCutoffTimer) {
+        window.clearTimeout(secondAudioCutoffTimer);
+      }
+      secondAudioCutoffTimer = window.setTimeout(() => {
+        if (secondSectionAudio) {
+          secondSectionAudio.pause();
+        }
+      }, 30000);
+    };
+
+    if (videoSection) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              secondSectionInView = true;
+              videoSection.classList.add("is-visible");
+              playSecondAudio();
+            } else {
+              secondSectionInView = false;
+              audioPlayedOnce = false;
+              stopSecondAudio();
+            }
+          });
+        },
+        {
+          threshold: 0.2
+        }
+      );
+
+      observer.observe(videoSection);
+    }
+
+    const unlockAudio = () => {
+      if (!secondSectionInView) return;
+      if (audioBlocked || !audioPlayedOnce) {
+        playSecondAudio();
+      }
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { passive: true });
+    window.addEventListener("keydown", unlockAudio);
+  </script>
+</body>
+</html>

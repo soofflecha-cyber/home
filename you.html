@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>you</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070707;
+      --text: rgba(255, 255, 255, 0.9);
+      --soft: rgba(255, 255, 255, 0.54);
+      --line: rgba(255, 255, 255, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Instrument Serif", serif;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 14% 18%, rgba(255, 255, 255, 0.05), transparent 24%),
+        radial-gradient(circle at 82% 72%, rgba(255, 255, 255, 0.04), transparent 28%),
+        linear-gradient(to bottom, #0b0b0b 0%, #070707 100%);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: clamp(2rem, 6vw, 5rem) clamp(1.2rem, 4vw, 3.5rem);
+      display: grid;
+      align-content: center;
+      gap: 2.2rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+      font-size: clamp(2rem, 4.4vw, 4.8rem);
+      max-width: 12ch;
+    }
+
+    .links {
+      display: flex;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+      font-size: clamp(1rem, 1.45vw, 1.5rem);
+    }
+
+    .links a {
+      color: var(--soft);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .links a:hover,
+    .links a:focus-visible {
+      color: var(--text);
+      border-color: var(--line);
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>you</h1>
+    <nav class="links" aria-label="external links">
+      <a href="#" target="_blank" rel="noreferrer">linkedin</a>
+      <a href="localhost.index.html">portfolio</a>
+    </nav>
+  </main>
+</body>
+</html>

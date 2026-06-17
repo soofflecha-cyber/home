@@ -1,0 +1,304 @@
+@font-face {
+  font-family: "Sporting Grotesque Local";
+  src: url("./font/SportingGrotesque-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Sporting Grotesque Local";
+  src: url("./font/SportingGrotesque-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root {
+  --bg: #d8f28f;
+  --text: #111111;
+  --accent: #d8f28f;
+  --overlay: rgba(0, 0, 0, 0.2);
+  --hover-text: #d8f28f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Karla", sans-serif;
+  transition: background-color 220ms ease-in-out;
+}
+
+body.gallery-hovered {
+  background: #ffffff;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+.site-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 74px 72px 0;
+}
+
+.site-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.site-logo__name {
+  color: var(--text);
+  font-family: "Karla", sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.site-logo__ascii {
+  margin: 0;
+  color: var(--accent);
+  font-family: "Courier New", "SFMono-Regular", monospace;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 400;
+  white-space: pre;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  padding-top: 28px;
+}
+
+.site-nav a {
+  color: var(--text);
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  text-decoration: underline;
+}
+
+.gallery {
+  width: 100%;
+  padding: 156px 48px 120px;
+  display: grid;
+  grid-template-columns: repeat(3, 250px);
+  justify-content: center;
+  column-gap: 68px;
+  row-gap: 118px;
+}
+
+.gallery-card {
+  position: relative;
+  margin: 0;
+  width: 250px;
+  height: 360px;
+  font-weight: 400;
+  overflow: visible;
+  background: transparent;
+}
+
+.gallery-link {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.gallery-card img,
+.video-thumb,
+.screen-thumb {
+  height: 100%;
+  width: 100%;
+}
+
+.gallery-card img,
+.video-thumb {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.gallery-card--p1 img {
+  object-position: 50% 46%;
+}
+
+.gallery-card--p2 img {
+  object-position: 50% 50%;
+}
+
+.gallery-card--p3 img {
+  object-position: 50% 50%;
+}
+
+.gallery-card--next .video-thumb {
+  object-position: 50% 50%;
+}
+
+.screen-thumb {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.screen-thumb iframe {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1280px;
+  height: 960px;
+  border: 0;
+  transform: translateX(-50%) scale(0.375);
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.gallery-card--room .screen-thumb iframe {
+  transform: translateX(-47%) scale(0.375);
+}
+
+.gallery-card--rooms .screen-thumb iframe {
+  transform: translateX(-52%) scale(0.375);
+}
+
+.card-overlay {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 230%;
+  height: 230%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  background: transparent;
+  color: var(--hover-text);
+  font-family: "Sporting Grotesque Local", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(54px, 5.8vw, 108px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+  pointer-events: none;
+}
+
+.gallery-card:hover .card-overlay,
+.gallery-card:focus-within .card-overlay,
+.gallery-card.is-touched .card-overlay {
+  opacity: 1;
+}
+
+.card-overlay--p4 {
+  line-height: 0.9;
+}
+
+.card-overlay--p1,
+.card-overlay--p2,
+.card-overlay--p3,
+.card-overlay--p4,
+.card-overlay--room,
+.card-overlay--next,
+.card-overlay--rooms {
+  font-size: clamp(54px, 5.8vw, 108px);
+  line-height: 0.9;
+}
+
+.gallery-card--video .video-thumb {
+  background: #000000;
+}
+
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Sporting Grotesque Local", sans-serif;
+  padding: 0 28px 24px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  color: #111111;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    padding: 32px 20px 0;
+  }
+
+  .site-logo {
+    gap: 4px;
+  }
+
+  .site-nav {
+    gap: 18px;
+    padding-top: 12px;
+  }
+
+  .gallery {
+    padding: 92px 20px 56px;
+    grid-template-columns: 1fr;
+    justify-content: start;
+    row-gap: 28px;
+  }
+
+  .gallery-card {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 0.7;
+  }
+
+  .screen-thumb iframe {
+    left: 50%;
+    transform: translateX(-50%) scale(0.26);
+  }
+
+  .gallery-card--room .screen-thumb iframe,
+  .gallery-card--rooms .screen-thumb iframe {
+    transform: translateX(-50%) scale(0.26);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
